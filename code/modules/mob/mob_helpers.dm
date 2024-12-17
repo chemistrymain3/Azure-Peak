@@ -529,6 +529,7 @@
 			mmb_intent.movement_interrupt = ranged_ability.movement_interrupt
 			mmb_intent.charging_slowdown = ranged_ability.charging_slowdown
 			mmb_intent.chargedloop = ranged_ability.chargedloop
+			mmb_intent.charge_glow = ranged_ability.charge_glow //mages glow when charging a spell this is so dogshit
 			mmb_intent.update_chargeloop()
 
 	hud_used.quad_intents.switch_intent(input)

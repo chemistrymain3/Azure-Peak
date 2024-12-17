@@ -18,6 +18,7 @@
 	var/releasedrain = 0
 	var/chargedrain = 0
 	var/chargetime = 0
+	var/charge_glow = null //this is a color
 	var/vitaedrain = 0 //for vamp spells
 	var/warnie = "mobwarning"
 	var/list/charge_invocation

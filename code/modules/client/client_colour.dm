@@ -117,6 +117,10 @@
 	colour = list(rgb(77,77,77), rgb(150,150,150), rgb(28,28,28), rgb(0,0,0))
 	priority = INFINITY //we can't see colors anyway!
 
+/datum/client_colour/blackandevil
+	colour = list(rgb(77,77,77), rgb(150,150,150), rgb(28,28,28), rgb(0,0,0),rgb(113, 1, 1))
+	priority = 40//we dont even use these lol
+
 /datum/client_colour/test1
 	colour = list(1,1,1,0.5, 1,1,1,0.5, 1,1,1,0.5)
 	priority = 2

@@ -27,6 +27,8 @@
 			to_chat(user, span_warning("Reddened and inflamed flesh accompanied by a brow flecked with sweat. Excess choleric, perhaps?"))
 		else if (human_target.reagents.has_reagent(/datum/reagent/infection/minor))
 			to_chat(user, span_warning("A slight yellowing indicates the barest presence of disrupted choleric humor."))
+		else if (human_target.reagents.has_reagent(/datum/reagent/infection/major/putrescent))
+			to_chat(user, span_warningbig("Roiling black and green churns inside decaying, pustulent flesh. The rot! How pretty."))
 		
 		return TRUE
 	revert_cast()
@@ -180,6 +182,9 @@
 				target.reagents.remove_reagent(/datum/reagent/infection/major, rand(5,10))
 				to_chat(user, span_notice("I settle some of [target]'s excess melancholic humour."))
 				return TRUE
+			else if (target.reagents.has_reagent(/datum/reagent/infection/major/putrescent))
+				target.reagents.remove_reagent(/datum/reagent/infection/major, rand(30,40)) //if this didn't work bro is cooked
+				to_chat(user, span_notice("I break the curse twisting [target]'s flesh, and their sanguine humours take a healthy red shade."))
 			else
 				to_chat(user, span_warning("Nothing happens."))
 				return FALSE

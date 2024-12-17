@@ -34,6 +34,7 @@
 	var/rmb_ranged = FALSE //we execute a proc with the same name when rmbing at range with no offhand intent selected
 	var/tshield = FALSE //probably needed or something
 	var/datum/looping_sound/chargedloop = null
+	var/charge_glow = null //this is for when the attacker who is charging must be made to have an effect 
 	var/keep_looping = TRUE
 	var/damfactor = 1 //multiplied by weapon's force for damage
 	var/penfactor = 0 //see armor_penetration
@@ -152,6 +153,8 @@
 			if(!istype(chargedloop))
 				chargedloop = new chargedloop(list(mastermob))
 
+#define GLOW_FILTER "glow_filter"
+
 /datum/intent/proc/on_charge_start() //what the fuck is going on here lol
 	if(mastermob.curplaying)
 		mastermob.curplaying.chargedloop.stop()
@@ -163,12 +166,18 @@
 			chargedloop.stop()
 		chargedloop.start(chargedloop.output_atoms)
 		mastermob.curplaying = src
+	if(charge_glow)
+		var/filter = mastermob.get_filter(GLOW_FILTER)
+		if (!filter)
+			mastermob.add_filter(GLOW_FILTER, 2, list("type" = "outline", "color" = charge_glow, "alpha" = 60, "size" = 1))
 
 /datum/intent/proc/on_mouse_up()
 	if(chargedloop)
 		chargedloop.stop()
 	if(mastermob.curplaying == src)
 		mastermob.curplaying = null
+	if(charge_glow)
+		mastermob.remove_filter(GLOW_FILTER)
 
 
 /datum/intent/use

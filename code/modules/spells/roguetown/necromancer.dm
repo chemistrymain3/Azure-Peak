@@ -69,13 +69,13 @@
 	overlay_state = "animate"
 	sound = list('sound/magic/magnet.ogg')
 	releasedrain = 40
-	chargetime = 60
+	chargetime = 30
 	warnie = "spellwarning"
 	no_early_release = TRUE
 	charging_slowdown = 1
 	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/arcane
-	charge_max = 60 SECONDS
+	charge_max = 30 SECONDS
 
 /obj/effect/proc_holder/spell/invoked/raise_undead/cast(list/targets, mob/living/user)
 	. = ..()
@@ -92,6 +92,12 @@
 			target.visible_message(span_warning("[target]'s eyes light up with an eerie glow!"))
 			target.mind.AddSpell(new /obj/effect/proc_holder/spell/self/suicidebomb/lesser)
 			target.equipOutfit(/datum/outfit/job/roguetown/greater_skeleton)
+			var/datum/antagonist/lich/lichman = user.mind.has_antag_datum(/datum/antagonist/lich)
+			var/datum/antagonist/skeleton/new_skele = new /datum/antagonist/skeleton()
+			if(lichman) //sanity check- is this guy a lich?
+				new_skele.lich_lord = lichman
+				lichman.skeleton_thralls += new_skele //create a list of all summons
+				target.mind.add_antag_datum(new_skele) // assign the skeleton antag datum
 		else
 			target.visible_message(span_warning("[target]'s form crumbles into dust."))
 			qdel(target)
@@ -109,7 +115,7 @@
 	range = 7
 	sound = list('sound/magic/magnet.ogg')
 	releasedrain = 40
-	chargetime = 60
+	chargetime = 30
 	warnie = "spellwarning"
 	no_early_release = TRUE
 	charging_slowdown = 1

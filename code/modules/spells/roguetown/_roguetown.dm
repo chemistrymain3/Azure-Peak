@@ -9,6 +9,7 @@
 	charge_max = 30
 	charge_type = "recharge"
 	invocation_type = "shout"
+	charge_glow =  "#d92101"
 	var/active_sound
 
 /obj/effect/proc_holder/spell/update_icon()
@@ -98,3 +99,29 @@
 		ready_projectile(P, target, user, i)
 		P.fire()
 	return TRUE
+
+/obj/effect/proc_holder/spell/invoked/chanted //spells that are chanted repeatedly
+	var/list/chant_invocations = list() //what you say while you chant
+	var/chant_amount = 5 //Times the chant is spoken
+	var/chant_interval = 10 //Amount of deciseconds between times the chant is actually spoken aloud
+	var/whispered = FALSE //do you whisper this
+
+/datum/effect/proc_holder/spell/invoked/chanted/proc/chant_effects(chant_amount, /mob/living/user) //The chant's periodic effects
+/datum/effect/proc_holder/spell/invoked/chanted/proc/end_chant_effects(chant_amount, mob/living/user) //The chant's effect upon ending
+
+/obj/effect/proc_holder/spell/invoked/chanted/cast(list/targets, mob/living/user)
+	. = ..()
+	var/i
+	for(i = 1, i <= chant_amount, i++)
+		if(!do_after(user, chant_interval, target = user))
+			break
+		if(!cast_check()) // in case we get mouthgrabbed or otherwise incapacitated while chanting
+			break
+		if(!LAZYLEN(chant_invocations))
+			continue
+		if(!whispered)
+			user.say(pick(chant_invocations))
+		else
+			user.whisper(pick(chant_invocations))
+		chant_effects(i, user)
+	end_chant_effects(i, user)

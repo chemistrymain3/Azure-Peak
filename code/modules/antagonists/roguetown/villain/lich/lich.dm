@@ -11,12 +11,14 @@
 	rogue_enabled = TRUE
 	var/list/phylacteries = list()
 	var/out_of_lives = FALSE
+	var/list/skeleton_thralls = list()
 
 /datum/antagonist/lich/on_gain()
 	var/datum/game_mode/C = SSticker.mode
 	C.liches |= owner
 	. = ..()
 	owner.special_role = name
+	owner.current.verbs |= /mob/living/carbon/human/proc/deathspeak
 	skele_look()
 	equip_lich()
 	greet()
@@ -154,3 +156,16 @@
 		QDEL_NULL(eyes)
 	eyes = new /obj/item/organ/eyes/night_vision/zombie
 	eyes.Insert(bigbad)
+
+/mob/living/carbon/human/proc/deathspeak()
+	set name = "Deathspeak"
+	set category = "SKELETON"
+
+	var/datum/game_mode/chaosmode/C = SSticker.mode
+	var/msg = input("Send a message.", "Command") as text|null
+	if(!msg)
+		return
+	for(var/datum/mind/L in C.liches)
+		to_chat(L, span_boldnotice("A message from [src.real_name]:[msg]"))
+	for(var/datum/mind/D in C.skeleton_thralls)
+		to_chat(D, span_boldnotice("A message from [src.real_name]:[msg]"))

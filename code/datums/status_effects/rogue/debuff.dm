@@ -254,3 +254,17 @@
 	name = "Chilled"
 	desc = "I can barely feel my limbs!"
 	icon_state = "chilled"
+
+/datum/status_effect/debuff/afflicted //used by scaborous touch, will fade when the reagent responsible is gone
+	id = "afflicted"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/afflicted
+	effectedstats = list("speed" = -3, "strength" = -2, "constitution" = -4)
+	duration = 30 SECONDS
+
+/atom/movable/screen/alert/status_effect/debuff/afflicted
+	name = "Afflicted"
+	desc = "Their hand touched me, and my body rots from the inside!"
+	icon_state = "poison"
+
+
+

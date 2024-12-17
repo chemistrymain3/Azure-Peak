@@ -79,7 +79,8 @@
 			S.AOE_flash(user, range = 8)
 		if(target.mob_biotypes & MOB_UNDEAD) //positive energy harms the undead
 			target.visible_message(span_danger("[target] is unmade by holy light!"), span_userdanger("I'm unmade by holy light!"))
-			target.gib()
+			target.adjust_fire_stacks(30)
+			target.IgniteMob()
 			return TRUE
 		target.adjustOxyLoss(-target.getOxyLoss()) //Ye Olde CPR
 		if(!target.revive(full_heal = FALSE))

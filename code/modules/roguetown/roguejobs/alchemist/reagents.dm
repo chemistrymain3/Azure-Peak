@@ -209,4 +209,13 @@
 		M.reagents.add_reagent(src, rand(1,3))
 		to_chat(M, span_small("I feel even worse..."))
 	return ..()
-	
+
+/datum/reagent/infection/major/putrescent
+	name = "fouled sanguine humour"
+	description = "Blood so befouled it has taken a shade of eigengrau. The work of fell magic- symptomatic of the Rot."
+	damage_tick = 2
+	fever_multiplier = 3
+
+/datum/reagent/infection/major/putrescent/on_mob_life(mob/living/carbon/M)
+	M.apply_status_effect(/datum/status_effect/debuff/afflicted)
+	..()
