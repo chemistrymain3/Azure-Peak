@@ -480,8 +480,8 @@
 	remarks = list("Pallium nihilum..", "Occultare veritatem..", "Veritatem removan menor..")
 
 /obj/item/book/granter/spell/blackstone/skeleton
-	name = "Scroll of Raise Skeleton"
-	spell = /obj/effect/proc_holder/spell/invoked/raise_undead
+	name = "Scroll of Create Skeleton"
+	spell = /obj/effect/proc_holder/spell/invoked/create_skeleton
 	spellname = "Raise Skeleton"
 	icon_state ="scrolldarkred"
 	remarks = list("Redi damnatos..", "Exitio ad Necram scriptor exolvuntur..", "Ossa in propinquus..")

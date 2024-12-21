@@ -1,6 +1,6 @@
 /obj/item/phylactery
 	name = "phylactery"
-	desc = "Looks like it is filled with some intense power."
+	desc = "An object, shining with unholy power. Whatever it's for, it's definitely nothing good."
 	icon = 'icons/obj/wizard.dmi'
 	icon_state = "soulstone"
 	item_state = "electronic"

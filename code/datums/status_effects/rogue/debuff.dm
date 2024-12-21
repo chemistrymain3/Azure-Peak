@@ -266,5 +266,16 @@
 	desc = "Their hand touched me, and my body rots from the inside!"
 	icon_state = "poison"
 
+/datum/status_effect/debuff/churn_spent
+	id = "churnspent"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/churnspent
+	effectedstats = list("speed" = -1, "strength" = -3, "constitution" = -3, "constitution" = -3)
+	duration = 5 MINUTES
+
+/atom/movable/screen/alert/status_effect/debuff/churnspent
+	name = "Power Weakened"
+	desc = "I used a very powerful spell, and will take a few minutes to recover."
+	icon_state = "muscles"
+
 
 

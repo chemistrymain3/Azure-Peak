@@ -61,8 +61,8 @@
 		return TRUE
 	return FALSE
 
-/obj/effect/proc_holder/spell/invoked/raise_undead
-	name = "Raise Greater Undead"
+/obj/effect/proc_holder/spell/invoked/create_skeleton
+	name = "Create Greater Skeleton"
 	desc = ""
 	clothes_req = FALSE
 	range = 7
@@ -77,7 +77,7 @@
 	associated_skill = /datum/skill/magic/arcane
 	charge_max = 30 SECONDS
 
-/obj/effect/proc_holder/spell/invoked/raise_undead/cast(list/targets, mob/living/user)
+/obj/effect/proc_holder/spell/invoked/create_skeleton/cast(list/targets, mob/living/user)
 	. = ..()
 	var/turf/T = get_turf(targets[1])
 	if(isopenturf(T))
@@ -89,14 +89,14 @@
 				var/mob/dead/new_player/N = C
 				N.close_spawn_windows()
 			target.key = C.key
-			target.visible_message(span_warning("[target]'s eyes light up with an eerie glow!"))
+			target.visible_message(span_warning("[target]'s eyes light up with an eerie glow!"),runechat_message = TRUE)
 			target.mind.AddSpell(new /obj/effect/proc_holder/spell/self/suicidebomb/lesser)
 			target.equipOutfit(/datum/outfit/job/roguetown/greater_skeleton)
 			var/datum/antagonist/lich/lichman = user.mind.has_antag_datum(/datum/antagonist/lich)
 			var/datum/antagonist/skeleton/new_skele = new /datum/antagonist/skeleton()
-			if(lichman) //sanity check- is this guy a lich?
+			if(lichman) //is this guy a lich?
 				new_skele.lich_lord = lichman
-				lichman.skeleton_thralls += new_skele //create a list of all summons
+				lichman.minions += new_skele //create a list of all summons
 				target.mind.add_antag_datum(new_skele) // assign the skeleton antag datum
 		else
 			target.visible_message(span_warning("[target]'s form crumbles into dust."))
@@ -144,6 +144,213 @@
 	else
 		to_chat(user, span_warning("The targeted location is blocked. My summon fails to come forth."))
 		return FALSE
+
+/obj/effect/proc_holder/spell/invoked/raise_dead
+	name = "Raise Dead"
+	cost = 1
+	desc = ""
+	clothes_req = FALSE
+	range = 7
+	overlay_state = "raiseskele"
+	sound = list('sound/magic/magnet.ogg')
+	releasedrain = 40
+	chargetime = 2 SECONDS
+	warnie = "spellwarning"
+	no_early_release = TRUE
+	charging_slowdown = 1
+	chargedloop = /datum/looping_sound/invokegen
+	associated_skill = /datum/skill/magic/arcane
+	charge_max = 2 SECONDS
+
+/obj/effect/proc_holder/spell/invoked/raise_zombie/cast(list/targets, mob/living/carbon/human/user)
+	. = ..()
+
+	user.say("Hygf'akni'kthakchratah!")
+	if(!("undead" in user.faction))
+		user.faction |= "undead"
+	var/obj = targets[1]
+
+	user.say("Hgf'ant'kthar!")
+
+	var/obj = targets[1]
+
+	if(!obj || !istype(obj, /mob/living/carbon/human))
+		to_chat(user, span_warning("I need to cast this spell on a corpse."))
+		return FALSE
+
+	var/mob/living/carbon/human/target = obj
+
+	if(istype(obj, /mob/living/carbon/human/species/goblin))
+		to_chat(user, span_warning("I cannot raise goblins."))
+		return FALSE
+	
+	if(target.stat != DEAD)
+		to_chat(user, span_warning("Raising the living is NOT Zizo's domain."))
+		return FALSE
+
+	var/obj/item/bodypart/target_head = target.get_bodypart(BODY_ZONE_HEAD)
+	if(!target_head)
+		to_chat(user, span_warning("This corpse is headless."))
+		return FALSE
+
+	var/offer_refused = FALSE
+
+	target.visible_message(span_warning("[target.real_name]'s body is engulfed by dark energy..."), runechat_message = TRUE)
+
+	if(target.ckey) //player still inside body
+
+		var/offer = alert(target, "Do you wish to be reanimated as a minion?", "RAISED BY NECROMANCER", "Yes", "No")
+		var/offer_time = world.time
+
+		if(offer == "No" || world.time > offer_time + 5 SECONDS)
+			to_chat(target, span_danger("Another soul will take over."))
+			offer_refused = TRUE
+
+		else if(offer == "Yes")
+			to_chat(target, span_danger("You rise as a minion."))
+			target.turn_to_minion(user, target.ckey)
+			target.visible_message(span_warning("[target.real_name]'s eyes light up with an evil glow."), runechat_message = TRUE)
+			return TRUE
+
+	if(!target.ckey || offer_refused) //player is not inside body or has refused, poll for candidates
+
+		var/list/candidates = pollCandidatesForMob("Do you want to play as a Necromancer's minion?", null, null, null, 100, target, POLL_IGNORE_NECROMANCER_SKELETON)
+
+		// theres at least one candidate
+		if(LAZYLEN(candidates))
+			var/mob/C = pick(candidates)
+			target.turn_to_minion(user, C.ckey)
+			target.visible_message(span_warning("[target.real_name]'s eyes light up with an eerie glow."), runechat_message = TRUE)
+
+		//no candidates, oh well
+		else
+			user.visible_message(span_warning("[target.real_name]'s fails to rise."), runechat_message = TRUE)
+
+		return TRUE
+
+	return FALSE
+
+/**
+  * Turns a mob into a skeletonized minion. Used for raising undead minions.
+  * If a ckey is provided, the minion will be controlled by the player.
+  *
+  * Vars:
+  * * master: master of the minion.
+  * * ckey (optional): ckey of the player that will control the minion.
+  */
+/mob/living/carbon/human/proc/turn_to_minion(mob/living/carbon/human/master, ckey)
+
+	if(!master)
+		return FALSE
+
+	src.revive(TRUE, TRUE)
+
+	if(ckey) //player
+		src.ckey = ckey
+
+	if(!mind)
+		mind_initialize()
+
+	mind.adjust_skillrank_up_to(/datum/skill/combat/maces, 3, TRUE)
+	mind.adjust_skillrank_up_to(/datum/skill/combat/axes, 3, TRUE)
+	mind.adjust_skillrank_up_to(/datum/skill/combat/crossbows, 3, TRUE)
+	mind.adjust_skillrank_up_to(/datum/skill/combat/wrestling, 3, TRUE)
+	mind.adjust_skillrank_up_to(/datum/skill/combat/unarmed, 3, TRUE)
+	mind.adjust_skillrank_up_to(/datum/skill/combat/swords, 3, TRUE)
+	mind.AddSpell(new /obj/effect/proc_holder/spell/self/suicidebomb/lesser)
+	mind.current.job = null
+
+	dna.species.species_traits |= NOBLOOD
+	dna.species.soundpack_m = new /datum/voicepack/skeleton()
+	dna.species.soundpack_f = new /datum/voicepack/skeleton()
+
+
+	cmode_music = 'sound/music/combat_cult.ogg'
+
+	patron = master.patron
+	mob_biotypes = MOB_UNDEAD
+	faction = list("undead")
+	ambushable = FALSE
+	underwear = "Nude"
+
+	for(var/obj/item/bodypart/BP in bodyparts)
+		BP.skeletonize()
+
+	var/obj/item/organ/eyes/eyes = getorganslot(ORGAN_SLOT_EYES)
+	if(eyes)
+		eyes.Remove(src,1)
+		QDEL_NULL(eyes)
+
+	eyes = new /obj/item/organ/eyes/night_vision/zombie
+	eyes.Insert(src)
+
+	if(charflaw)
+		QDEL_NULL(charflaw)
+
+	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOLIMBDISABLE, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_EASYDISMEMBER, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_LIMBATTACHMENT, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOBREATH, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOPAIN, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_TOXIMMUNE, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOSLEEP, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_SHOCKIMMUNE, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_NOROGSTAM, TRAIT_GENERIC)
+
+	update_body()
+
+	to_chat(src, span_userdanger("My master is [master.real_name]."))
+
+	master.minions += src
+
+	return TRUE
+
+/obj/effect/proc_holder/spell/targeted/churnliving
+	name = "Churn Living"
+	cost = 1
+	desc = "The best part about living forever is an eternity of ironic punishments."
+	range = 5
+	releasedrain = 30
+	charge_max = 5 MINUTES //GET THE FUCK OFF ME blast. All or nothing.
+	max_targets = 0
+	cast_without_targets = TRUE
+	sound = 'sound/magic/churn.ogg'
+	associated_skill = /datum/skill/magic/arcane
+	invocation = "Zizo condemns!"
+	invocation_type = "shout" 
+
+/obj/effect/proc_holder/spell/targeted/churn/cast(list/targets,mob/living/user = usr)
+	. = ..()
+	var/list/living_to_churn = list()
+	for(var/mob/living/L in targets)
+		if(L.stat == DEAD)
+			continue
+	for (var/mob/living/carbon/human/L in view(src, 5))
+		if(target.anti_magic_check(TRUE, TRUE) || HAS_TRAIT(L, TRAIT_ANTIMAGIC) || L.mob_biotypes & MOB_UNDEAD)
+			continue
+		else
+			living_to_churn += L
+	if (LAZYLEN(living_to_churn))
+		user.visible_message(span_danger("[user] unmakes living flesh with a gesture!!"),runechat_message = TRUE)
+		for(var/mob/living/victim in living_to_churn)
+			victim.visible_message(span_danger("[target] is smited by death magic!"), span_userdanger("ZIZOZIZOZIZOZIZOZIZO-"))
+			victim.adjustBruteLoss(50)
+			if(victim.blood_volume > BLOOD_VOLUME_OKAY)
+					victim.blood_volume -= 100
+					user.Beam(victim,icon_state="drainbeam",time=10)
+			victim.Knockdown(10)
+			victim.emote("agony")
+			victim.flash_fullscreen("redflash3")
+			playsound(user, 'sound/magic/churn.ogg', 100, TRUE)
+	to_chat(user, span_warning("I am weakened, having spent all my power. It will take time to recuperate."))
+	user.Stun(10)
+	user.apply_status_effect(/datum/status_effect/debuff/churn_spent)
+	else
+		to_chat(user, span_warning("There's nobody in range this can affect."))
+	..()
+	return TRUE
 
 /obj/effect/proc_holder/spell/invoked/projectile/sickness
 	name = "Ray of Sickness"

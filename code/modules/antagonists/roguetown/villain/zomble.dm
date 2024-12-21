@@ -67,8 +67,6 @@
 		return span_boldnotice("Another deadite. [fellow_zombie.has_turned ? "My ally." : span_warning("Hasn't turned yet.")]")
 	if(istype(examined_datum, /datum/antagonist/skeleton))
 		return span_boldnotice("Another deadite.")
-	if(istype(examined_datum, /datum/antagonist/lich))
-		return span_boldnotice("A lych. It will lead me to flesh.")
 
 /datum/antagonist/zombie/on_gain()
 	var/mob/living/carbon/human/zombie = owner?.current
@@ -312,7 +310,7 @@
 		return
 	if(stat >= DEAD) //do shit the natural way i guess
 		return
-	to_chat(src, span_userdanger("I feel sick- the rot festers within me!"))
+	to_chat(src, span_danger("I feel horrible... REALLY horrible..."))
 	mob_timers["puke"] = world.time
 	vomit(1, blood = TRUE, stun = FALSE)
 	addtimer(CALLBACK(src, PROC_REF(wake_zombie)), 1 MINUTES)
@@ -323,7 +321,7 @@
 	if(!zombie_antag || zombie_antag.has_turned)
 		return FALSE
 	flash_fullscreen("redflash3")
-	to_chat(src, span_danger("The rot overtakes me! I am a zombie!"))
+	to_chat(src, span_danger("It hurts... Is this really the end for me?"))
 	emote("scream") // heres your warning to others bro
 	Knockdown(1)
 	zombie_antag.wake_zombie(TRUE)

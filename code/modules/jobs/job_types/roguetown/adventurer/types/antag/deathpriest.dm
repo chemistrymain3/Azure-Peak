@@ -24,7 +24,7 @@
 	H.mind.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/alchemy, 3, TRUE)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/bonechill/weak)
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_undead)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_lesser_skeleton)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/sickness)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/scaboroustouch)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/profane)

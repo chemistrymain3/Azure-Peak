@@ -17,16 +17,6 @@
 		return span_boldnotice("A lych! My master.")
 
 /datum/antagonist/skeleton/on_gain()
-	var/datum/game_mode/C = SSticker.mode
-	C.skeletons |= owner
-	. = ..()
-	owner.special_role = name
-	owner.current.verbs |= /mob/living/carbon/human/proc/deathspeak
-//	if(!(locate(/datum/objective/escape) in objectives))
-//		var/datum/objective/escape/boat/escape_objective = new
-//		escape_objective.owner = owner
-//		objectives += escape_objective
-//		return
 	return ..()
 
 /datum/antagonist/skeleton/on_removal()

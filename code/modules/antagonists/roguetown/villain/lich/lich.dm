@@ -11,7 +11,10 @@
 	rogue_enabled = TRUE
 	var/list/phylacteries = list()
 	var/out_of_lives = FALSE
-	var/list/skeleton_thralls = list()
+
+/mob/living/carbon/human
+	/// List of minions that this mob has control over. Used for things like the Lich's "Command Undead" spell.
+	var/list/mob/minions = list()
 
 /datum/antagonist/lich/on_gain()
 	var/datum/game_mode/C = SSticker.mode
@@ -89,13 +92,13 @@
 	backl = /obj/item/storage/backpack/rogue/satchel
 	beltr = /obj/item/reagent_containers/glass/bottle/rogue/manapot
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
-	r_hand = /obj/item/rogueweapon/woodstaff/wise
+	r_hand = /obj/item/rogueweapon/woodstaff/blackstaff
 
 	H.mind.adjust_skillrank(/datum/skill/misc/reading, 6, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/alchemy, 5, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/magic/arcane, 5, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/riding, 4, TRUE)
-	H.mind.adjust_skillrank(/datum/skill/combat/polearms, 1, TRUE)
+	H.mind.adjust_skillrank(/datum/skill/combat/polearms, 5, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 1, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/swimming, 1, TRUE)
@@ -106,19 +109,19 @@
 	H.mind.adjust_skillrank(/datum/skill/craft/crafting, 1, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/medicine, 3, TRUE)
 
-	H.change_stat("strength", -1)
 	H.change_stat("intelligence", 5)
 	H.change_stat("constitution", 5)
-	H.change_stat("endurance", -1)
-	H.change_stat("speed", -1)
+	H.change_stat("endurance", 5)
 
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/bonechill)
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_undead)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/create_skeleton)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_lesser_undead)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_dead)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fireball)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/bloodlightning)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/fetch)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/diagnose/secular)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/churnliving)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/suicidebomb)
 	H.ambushable = FALSE
 
@@ -161,11 +164,35 @@
 	set name = "Deathspeak"
 	set category = "SKELETON"
 
-	var/datum/game_mode/chaosmode/C = SSticker.mode
-	var/msg = input("Send a message.", "Command") as text|null
-	if(!msg)
+	var/message = input("Speak to your minions!", "LICH") as text|null
+
+	if(!message)
 		return
-	for(var/datum/mind/L in C.liches)
-		to_chat(L, span_boldnotice("A message from [src.real_name]:[msg]"))
-	for(var/datum/mind/D in C.skeleton_thralls)
-		to_chat(D, span_boldnotice("A message from [src.real_name]:[msg]"))
+
+	var/mob/living/carbon/human/lich_player = user
+
+	to_chat(lich_player, span_boldannounce("Lich [lich_player.real_name] commands: [message]"))
+
+	for(var/mob/player in lich_player.minions)
+		if(player.mind)
+			to_chat(player, span_boldannounce("Lich [lich_player.real_name] commands: [message]"))
+
+/obj/item/rogueweapon/woodstaff/blackstaff
+	name = "blackstaff"
+	desc = "An unadorned, night-black staff carved of bone.\
+	<span class='necrosis'>It glistens with deathly energies.\</span>"
+	max_integrity = 9999
+	sellprice = 666
+	static_price = TRUE
+	force = 20
+	force_wielded = 25
+	possible_item_intents = list(SPEAR_BASH)
+	gripped_intents = list(SPEAR_BASH,/datum/intent/mace/smash)
+
+/obj/item/rogueweapon/woodstaff/lich/pickup(mob/living/target, mob/living/carbon/human/user)
+	. = ..()
+	if(!HAS_TRAIT(user, TRAIT_CABAL))
+		user.Paralyze(100)
+		user.dropItemToGround(src, TRUE)
+		user.visible_message(span_warning("A powerful force shoves [user] away from [target]!"), \
+							 span_necrosis("\"THAT DOES NOT BELONG TO YOU.\""))
