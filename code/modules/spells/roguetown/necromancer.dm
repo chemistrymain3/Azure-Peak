@@ -10,8 +10,30 @@
 	sound = 'sound/magic/whiteflame.ogg'
 	associated_skill = /datum/skill/magic/arcane
 	antimagic_allowed = TRUE
-	charge_max = 15 SECONDS
+	charge_max = 30 SECONDS
 	miracle = FALSE
+
+/obj/effect/proc_holder/spell/invoked/bonechill/cast(list/targets, mob/living/user)
+	. = ..()
+	if(isliving(targets[1]))
+		var/mob/living/target = targets[1]
+		if(target.mob_biotypes & MOB_UNDEAD) //positive energy harms the undead)
+			target.adjustBruteLoss(-100, updating_health = FALSE, forced = TRUE)
+			target.adjustFireLoss(-100, updating_health = FALSE, forced = TRUE)
+			target.heal_wounds(50, 50) //Heal every wound that is not permanent
+			target.visible_message(span_danger("[target] reforms under the vile energy!"), span_notice("I'm remade by dark magic!"))
+			return TRUE
+		target.visible_message(span_info("Necrotic energy floods over [target]!"), span_userdanger("I feel colder as the dark energy floods into me!"))
+		if(iscarbon(target))
+			target.apply_status_effect(/datum/status_effect/bonechill)
+		else
+			target.adjustBruteLoss(20)
+		return TRUE
+	return FALSE
+
+/obj/effect/proc_holder/spell/invoked/bonechill/weak
+	name = "Lesser Bonechill"
+	charge_max = 15 SECONDS
 
 /obj/effect/proc_holder/spell/invoked/bonechill/cast(list/targets, mob/living/user)
 	. = ..()
@@ -33,6 +55,8 @@
 			target.adjustBruteLoss(20)
 		return TRUE
 	return FALSE
+
+
 
 /obj/effect/proc_holder/spell/invoked/eyebite
 	name = "Eyebite"
@@ -338,8 +362,8 @@
 			victim.visible_message(span_danger("[target] is smited by death magic!"), span_userdanger("ZIZOZIZOZIZOZIZOZIZO-"))
 			victim.adjustBruteLoss(50)
 			if(victim.blood_volume > BLOOD_VOLUME_OKAY)
-					victim.blood_volume -= 100
-					user.Beam(victim,icon_state="drainbeam",time=10)
+				victim.blood_volume -= 100
+				user.Beam(victim,icon_state="drainbeam",time=10)
 			victim.Knockdown(10)
 			victim.emote("agony")
 			victim.flash_fullscreen("redflash3")

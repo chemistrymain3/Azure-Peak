@@ -2,6 +2,7 @@
 	name = "Death Priest"
 	tutorial = "You once worshipped Death, as a loyal follower of Necra. Now, you desecrate it- twisted into Zizo's service at the hand of the lych, you serve as the arcyne support of their army. Mend bone. Raise the dead. Castigate the living."
 	outfit = /datum/outfit/job/roguetown/greater_skeleton/death_priest
+	maximum_possible_slots = 2
 	category_tags = list(CTAG_SKELETON)
 
 /datum/outfit/job/roguetown/greater_skeleton/death_priest/pre_equip(mob/living/carbon/human/H) //todo- see about drip for them. maybe we can give them bronze shit or someth
@@ -24,7 +25,7 @@
 	H.mind.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/alchemy, 3, TRUE)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/bonechill/weak)
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_lesser_skeleton)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_lesser_undead)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/sickness)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/scaboroustouch)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/profane)
@@ -58,7 +59,7 @@
 /obj/item/melee/touch_attack/scaboroustouch/attack_self()
 	attached_spell.remove_hand()
 
-/obj/item/melee/touch_attack/scaboroustouch/afterattack(atom/target, mob/living/carbon/user, proximity)
+/obj/item/melee/touch_attack/scaboroustouch/afterattack(mob/target, mob/living/carbon/user, proximity)
 	if(isliving(target))
 		if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE) || (target.mob_biotypes & MOB_UNDEAD))
 			user.visible_message(span_danger("[user] draws a glyph in the air and touches [target], but nothing happens."))
