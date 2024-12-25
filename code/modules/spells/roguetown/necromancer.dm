@@ -101,7 +101,7 @@
 	associated_skill = /datum/skill/magic/arcane
 	charge_max = 30 SECONDS
 
-/obj/effect/proc_holder/spell/invoked/create_skeleton/cast(list/targets, mob/living/user)
+/obj/effect/proc_holder/spell/invoked/create_skeleton/cast(list/targets, mob/living/carbon/human/user)
 	. = ..()
 	var/turf/T = get_turf(targets[1])
 	if(isopenturf(T))
@@ -120,7 +120,7 @@
 			var/datum/antagonist/skeleton/new_skele = new /datum/antagonist/skeleton()
 			if(lichman) //is this guy a lich?
 				new_skele.lich_lord = lichman
-				lichman.minions += new_skele //create a list of all summons
+				user.minions += new_skele //create a list of all summons
 				target.mind.add_antag_datum(new_skele) // assign the skeleton antag datum
 		else
 			target.visible_message(span_warning("[target]'s form crumbles into dust."))
@@ -352,14 +352,14 @@
 		if(L.stat == DEAD)
 			continue
 	for (var/mob/living/carbon/human/L in view(src, 5))
-		if(target.anti_magic_check(TRUE, TRUE) || HAS_TRAIT(L, TRAIT_ANTIMAGIC) || L.mob_biotypes & MOB_UNDEAD)
+		if(L.anti_magic_check(TRUE, TRUE) || HAS_TRAIT(L, TRAIT_ANTIMAGIC) || L.mob_biotypes & MOB_UNDEAD)
 			continue
 		else
 			living_to_churn += L
 	if (LAZYLEN(living_to_churn))
 		user.visible_message(span_danger("[user] unmakes living flesh with a gesture!!"),runechat_message = TRUE)
 		for(var/mob/living/victim in living_to_churn)
-			victim.visible_message(span_danger("[target] is smited by death magic!"), span_userdanger("ZIZOZIZOZIZOZIZOZIZO-"))
+			victim.visible_message(span_danger("[victim] is smited by death magic!"), span_userdanger("ZIZOZIZOZIZOZIZOZIZO-"))
 			victim.adjustBruteLoss(50)
 			if(victim.blood_volume > BLOOD_VOLUME_OKAY)
 				victim.blood_volume -= 100
@@ -368,9 +368,9 @@
 			victim.emote("agony")
 			victim.flash_fullscreen("redflash3")
 			playsound(user, 'sound/magic/churn.ogg', 100, TRUE)
-	to_chat(user, span_warning("I am weakened, having spent all my power. It will take time to recuperate."))
-	user.Stun(10)
-	user.apply_status_effect(/datum/status_effect/debuff/churn_spent)
+		to_chat(user, span_warning("I am weakened, having spent all my power. It will take time to recuperate."))
+		user.Stun(10)
+		user.apply_status_effect(/datum/status_effect/debuff/churn_spent)
 	else
 		to_chat(user, span_warning("There's nobody in range this can affect."))
 	..()

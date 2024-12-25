@@ -14,7 +14,7 @@
 
 /mob/living/carbon/human
 	/// List of minions that this mob has control over. Used for things like the Lich's "Command Undead" spell.
-	var/list/mob/minions = list()
+	var/list/minions = list()
 
 /datum/antagonist/lich/on_gain()
 	var/datum/game_mode/C = SSticker.mode
@@ -169,7 +169,7 @@
 	if(!message)
 		return
 
-	var/mob/living/carbon/human/lich_player = user
+	var/mob/living/carbon/human/lich_player = usr
 
 	to_chat(lich_player, span_boldannounce("Lich [lich_player.real_name] commands: [message]"))
 
