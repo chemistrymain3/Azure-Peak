@@ -59,7 +59,7 @@
 /obj/item/melee/touch_attack/scaboroustouch/attack_self()
 	attached_spell.remove_hand()
 
-/obj/item/melee/touch_attack/scaboroustouch/afterattack(mob/target, mob/living/carbon/user, proximity)
+/obj/item/melee/touch_attack/scaboroustouch/afterattack(mob/living/target, mob/living/carbon/user, proximity)
 	if(isliving(target))
 		if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE) || (target.mob_biotypes & MOB_UNDEAD))
 			user.visible_message(span_danger("[user] draws a glyph in the air and touches [target], but nothing happens."))
@@ -102,22 +102,22 @@
 			if(chant_amount == 1)
 				to_chat(user, span_danger("The amulet glows, and the spell fails to take shape on [L]!"))
 			continue
-		if(target.anti_magic_check(TRUE, TRUE) || HAS_TRAIT(L, TRAIT_ANTIMAGIC) || L.mob_biotypes & MOB_UNDEAD)
+		if(L.anti_magic_check(TRUE, TRUE) || HAS_TRAIT(L, TRAIT_ANTIMAGIC) || L.mob_biotypes & MOB_UNDEAD)
 			continue
 		else
 			living_to_weaken += L
-	if (LAZYLEN(living_to_weaken))
-			user.visible_message(span_crit("[user] begins to chant in an abhorrent language, and-"), span_notice("I begin to chant the rite of hollowing, and flesh festers and ruins around me. I must stay still to maintain the ritual."))
-			for(var/mob/living/victim in living_to_weaken)
-				victim.apply_status_effect(/datum/status_effect/hollowed, user)
-				victim.rogfat_add(15)
-				victim.adjustFireLoss(20)
-				victim.emote("agony")
+	if(LAZYLEN(living_to_weaken))
+		user.visible_message(span_crit("[user] begins to chant in an abhorrent language, and-"), span_notice("I begin to chant the rite of hollowing, and flesh festers and ruins around me. I must stay still to maintain the ritual."))
+		for(var/mob/living/victim in living_to_weaken)
+			victim.apply_status_effect(/datum/status_effect/debuff/hollowed, user)
+			victim.rogfat_add(15)
+			victim.adjustFireLoss(20)
+			victim.emote("agony")
 
-	else if
+	else if(chant_amount == 1)
 		to_chat(user, span_notice("I begin the rite of hollowing, but there are no living around me. Am I stupid?"))
 	
-	/datum/status_effect/debuff/hollowed
+/datum/status_effect/debuff/hollowed
 	id = "hollowed"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/hollowed
 	effectedstats = list( "constitution" = -4, "fortune" = -4) //4 is death, after all
@@ -148,10 +148,12 @@
 /datum/status_effect/debuff/hollowed/on_apply()
 	..()
 	owner.add_client_colour(/datum/client_colour/blackandevil)
-	if(owner.wCount.len > 0)
+	var/list/wCount = owner.get_wounds()
+	if(wCount.len > 0)
 		playsound(owner, "smallslash", 100, TRUE, -1)
 		to_chat(owner, span_danger("All my wounds are pried open by terrible magic!"))
-		wound.sew_progress = 0
+		for(var/datum/wound/wound as anything in wCount)
+			wound.sew_progress = 0
 	sleep(14)
 	to_chat(owner, span_gamedeadsay(pick(weakening_lines)))
 
@@ -163,10 +165,10 @@
 /datum/status_effect/debuff/hollowed/tick()
 	if (prob(5))
 		to_chat(owner, span_gamedeadsay(pick(weakening_lines)))
-	if(owner.wCount.len > 0)
-		for(var/datum/wound/wound as anything in owner.get_wounds())
+	var/list/wCount = owner.get_wounds()
+	if(wCount.len > 0)
+		for(var/datum/wound/wound as anything in wCount)
 			wound.bleed_rate = min(wound.bleed_rate*1.1, initial(wound.bleed_rate)*2)
-			wound.sew_progress = 0
 			wound.woundpain = min(wound.woundpain*1.1, initial(wound.woundpain)*2)
 
 /datum/status_effect/debuff/hollowed/process()

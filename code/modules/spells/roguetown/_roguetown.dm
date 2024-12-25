@@ -106,8 +106,8 @@
 	var/chant_interval = 10 //Amount of deciseconds between times the chant is actually spoken aloud
 	var/whispered = FALSE //do you whisper this
 
-/datum/effect/proc_holder/spell/invoked/chanted/proc/chant_effects(chant_amount, /mob/living/user) //The chant's periodic effects
-/datum/effect/proc_holder/spell/invoked/chanted/proc/end_chant_effects(chant_amount, mob/living/user) //The chant's effect upon ending
+/obj/effect/proc_holder/spell/invoked/chanted/proc/chant_effects(chant_amount, /mob/living/user) //The chant's periodic effects
+/obj/effect/proc_holder/spell/invoked/chanted/proc/end_chant_effects(chant_amount, mob/living/user) //The chant's effect upon ending
 
 /obj/effect/proc_holder/spell/invoked/chanted/cast(list/targets, mob/living/user)
 	. = ..()
