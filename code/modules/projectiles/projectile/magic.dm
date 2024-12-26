@@ -536,7 +536,7 @@
 /obj/projectile/magic/sickness
 	name = "Bolt of Sickness"
 	icon_state = "xray"
-	damage = 10
+	damage = 20
 	damage_type = BURN
 	flag = "magic"
 	range = 15
@@ -545,7 +545,7 @@
 	. = ..()
 	if(iscarbon(target))
 		var/mob/living/carbon/M = target
-		M.reagents.add_reagent(/datum/reagent/toxin, 3)
+		M.reagents.add_reagent(/datum/reagent/berrypoison, 5)
 
 /obj/projectile/magic/sapping
 	name = "bolt of sapping"

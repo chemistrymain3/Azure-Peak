@@ -196,8 +196,6 @@
 
 	user.say("Hgf'ant'kthar!")
 
-	var/obj = targets[1]
-
 	if(!obj || !istype(obj, /mob/living/carbon/human))
 		to_chat(user, span_warning("I need to cast this spell on a corpse."))
 		return FALSE

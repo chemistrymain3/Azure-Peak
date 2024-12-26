@@ -86,13 +86,6 @@
 	associated_skill = /datum/skill/magic/arcane
 	chargedloop = /datum/looping_sound/invokeascendant
 	cast_without_targets = TRUE
-	var/list/weakening_lines = list(
-		"Shadows clutch at my vision, closing in...",
-		"The dead raising the dead raising the dead raising the dead raising the-",
-		"I hear the screaming of the carriageman, and then silence. My body feels like it will sink into the earth...",
-		"I see myself, on my deathbed. I am alone. My eyesockets are alight- NO!",
-		"ZIZOZIZOZIZOZIZOZIZOZIZOZIZO-"
-	)
 
 /obj/effect/proc_holder/spell/invoked/chanted/hollowvessel/chant_effects(chant_amount, mob/living/carbon/human/user)
 	. = ..()
