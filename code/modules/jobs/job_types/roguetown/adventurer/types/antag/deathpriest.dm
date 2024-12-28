@@ -7,13 +7,14 @@
 
 /datum/outfit/job/roguetown/greater_skeleton/death_priest/pre_equip(mob/living/carbon/human/H) //todo- see about drip for them. maybe we can give them bronze shit or someth
 	..()
-	head = /obj/item/clothing/head/roguetown/necromhood
+	head = /obj/item/clothing/head/roguetown/necrahood
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	shoes = /obj/item/clothing/shoes/roguetown/simpleshoes
-	armor = /obj/item/clothing/suit/roguetown/shirt/robe/necromancer
+	armor = /obj/item/clothing/suit/roguetown/shirt/robe/necra
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	backl = /obj/item/storage/backpack/rogue/satchel/black
 	mask = /obj/item/clothing/mask/rogue/skullmask
+	neck = /obj/item/clothing/neck/roguetown/skullamulet
 	r_hand = /obj/item/rogueweapon/woodstaff
 	H.mind.adjust_skillrank(/datum/skill/misc/reading, 4, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
@@ -29,6 +30,7 @@
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/sickness)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/scaboroustouch)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/profane)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/chanted/hollowvessel)
 
 /obj/effect/proc_holder/spell/targeted/touch/scaboroustouch
 	name = "Scaborous Touch"
@@ -37,7 +39,7 @@
 	drawmessage = "I utter the lesser secrets of Zaribel, and sickness brims on my hand..."
 	dropmessage = "I release my focus, and death recedes."
 	school = "transmutation"
-	overlay_state = "raiseskele"
+	overlay_state = "bloodsteal"
 	sound = list('sound/misc/portal_enter.ogg')
 	chargedrain = 0
 	chargetime = 0
@@ -86,6 +88,7 @@
 	associated_skill = /datum/skill/magic/arcane
 	chargedloop = /datum/looping_sound/invokeascendant
 	cast_without_targets = TRUE
+
 
 /obj/effect/proc_holder/spell/invoked/chanted/hollowvessel/chant_effects(chant_amount, mob/living/carbon/human/user)
 	. = ..()

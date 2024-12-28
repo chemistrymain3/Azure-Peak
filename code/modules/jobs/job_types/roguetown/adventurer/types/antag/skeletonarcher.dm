@@ -8,8 +8,8 @@
 	..()
 	head = /obj/item/clothing/head/roguetown/helmet/kettle
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/hide
-	cloak = /obj/item/clothing/cloak/raincloak/furcloak/woad
-	mask = /obj/item/clothing/mask/rogue/wildguard
+	cloak = /obj/item/clothing/cloak/raincloak/mortus
+	mask = /obj/item/clothing/mask/rogue/facemask
 	neck = /obj/item/clothing/neck/roguetown/coif
 	gloves = /obj/item/clothing/gloves/roguetown/leather
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather

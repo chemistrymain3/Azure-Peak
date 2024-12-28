@@ -1,12 +1,12 @@
 /obj/effect/proc_holder/spell/invoked/bonechill
 	name = "Bone Chill"
-	overlay_state = "raiseskele"
+	overlay_state = "rituos"
 	releasedrain = 30
 	chargetime = 5
 	range = 7
 	warnie = "sydwarning"
 	movement_interrupt = FALSE
-	chargedloop = null
+	chargedloop = /datum/looping_sound/invokeascendant
 	sound = 'sound/magic/whiteflame.ogg'
 	associated_skill = /datum/skill/magic/arcane
 	antimagic_allowed = TRUE
@@ -26,6 +26,7 @@
 		target.visible_message(span_info("Necrotic energy floods over [target]!"), span_userdanger("I feel colder as the dark energy floods into me!"))
 		if(iscarbon(target))
 			target.apply_status_effect(/datum/status_effect/bonechill)
+			target.adjustBruteLoss(40)
 		else
 			target.adjustBruteLoss(20)
 		return TRUE
@@ -51,6 +52,7 @@
 		target.visible_message(span_info("Necrotic energy floods over [target]!"), span_userdanger("I feel colder as the dark energy floods into me!"))
 		if(iscarbon(target))
 			target.apply_status_effect(/datum/status_effect/debuff/chilled)
+			target.adjustBruteLoss(20)
 		else
 			target.adjustBruteLoss(20)
 		return TRUE
@@ -371,6 +373,7 @@
 		user.apply_status_effect(/datum/status_effect/debuff/churn_spent)
 	else
 		to_chat(user, span_warning("There's nobody in range this can affect."))
+		revert_cast()
 	..()
 	return TRUE
 

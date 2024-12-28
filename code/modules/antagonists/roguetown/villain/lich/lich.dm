@@ -179,8 +179,8 @@
 
 /obj/item/rogueweapon/woodstaff/blackstaff
 	name = "blackstaff"
-	desc = "An unadorned, night-black staff carved of bone.\
-	<span class='necrosis'>It glistens with deathly energies.\</span>"
+	desc =  "<span class='necrosis'>An unadorned, night-black staff carved of bone.\
+	It glistens with deathly energies.\</span>"
 	max_integrity = 9999
 	sellprice = 666
 	static_price = TRUE
