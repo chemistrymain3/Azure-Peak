@@ -194,17 +194,14 @@
 	user.say("Hygf'akni'kthakchratah!")
 	if(!("undead" in user.faction))
 		user.faction |= "undead"
-	var/obj = targets[1]
 
-	user.say("Hgf'ant'kthar!")
+	var/mob/living/carbon/human/target = targets[1]
 
-	if(!obj || !istype(obj, /mob/living/carbon/human))
+	if(!target || !istype(target, /mob/living/carbon/human))
 		to_chat(user, span_warning("I need to cast this spell on a corpse."))
 		return FALSE
 
-	var/mob/living/carbon/human/target = obj
-
-	if(istype(obj, /mob/living/carbon/human/species/goblin))
+	if(istype(target, /mob/living/carbon/human/species/goblin))
 		to_chat(user, span_warning("I cannot raise goblins."))
 		return FALSE
 	
