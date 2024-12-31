@@ -32,11 +32,11 @@
 		return TRUE
 	return FALSE
 
-/obj/effect/proc_holder/spell/invoked/bonechill/weak
+/obj/effect/proc_holder/spell/invoked/lesser_bonechill/weak
 	name = "Lesser Bonechill"
 	charge_max = 15 SECONDS
 
-/obj/effect/proc_holder/spell/invoked/bonechill/cast(list/targets, mob/living/user)
+/obj/effect/proc_holder/spell/invoked/lesser_bonechill/cast(list/targets, mob/living/user)
 	. = ..()
 	if(isliving(targets[1]))
 		var/mob/living/target = targets[1]
@@ -188,23 +188,20 @@
 	associated_skill = /datum/skill/magic/arcane
 	charge_max = 2 SECONDS
 
-/obj/effect/proc_holder/spell/invoked/raise_zombie/cast(list/targets, mob/living/carbon/human/user)
+/obj/effect/proc_holder/spell/invoked/raise_dead/cast(list/targets, mob/living/carbon/human/user)
 	. = ..()
 
 	user.say("Hygf'akni'kthakchratah!")
 	if(!("undead" in user.faction))
 		user.faction |= "undead"
-	var/obj = targets[1]
 
-	user.say("Hgf'ant'kthar!")
+	var/mob/living/carbon/human/target = targets[1]
 
-	if(!obj || !istype(obj, /mob/living/carbon/human))
+	if(!target || !istype(target, /mob/living/carbon/human))
 		to_chat(user, span_warning("I need to cast this spell on a corpse."))
 		return FALSE
 
-	var/mob/living/carbon/human/target = obj
-
-	if(istype(obj, /mob/living/carbon/human/species/goblin))
+	if(istype(target, /mob/living/carbon/human/species/goblin))
 		to_chat(user, span_warning("I cannot raise goblins."))
 		return FALSE
 	
@@ -267,10 +264,10 @@
 	if(!master)
 		return FALSE
 
-	src.revive(TRUE, TRUE)
+	revive(TRUE, TRUE)
 
 	if(ckey) //player
-		src.ckey = ckey
+		ckey = ckey
 
 	if(!mind)
 		mind_initialize()
@@ -345,13 +342,10 @@
 	invocation = "Zizo condemns!"
 	invocation_type = "shout" 
 
-/obj/effect/proc_holder/spell/targeted/churn/cast(list/targets,mob/living/user = usr)
+/obj/effect/proc_holder/spell/targeted/churnliving/cast(list/targets, mob/living/user)
 	. = ..()
 	var/list/living_to_churn = list()
-	for(var/mob/living/L in targets)
-		if(L.stat == DEAD)
-			continue
-	for (var/mob/living/carbon/human/L in view(src, 5))
+	for (var/mob/living/carbon/human/L in view(user, 5))
 		if(L.anti_magic_check(TRUE, TRUE) || HAS_TRAIT(L, TRAIT_ANTIMAGIC) || L.mob_biotypes & MOB_UNDEAD)
 			continue
 		else
