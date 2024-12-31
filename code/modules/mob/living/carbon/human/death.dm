@@ -45,6 +45,9 @@
 				dust(just_ash=TRUE,drop_items=TRUE)
 				return
 		var/datum/antagonist/lich/L = mind.has_antag_datum(/datum/antagonist/lich)
+		for(var/mob/living/M in minions)
+			M.dust()
+			visible_message(span_warning("[M]'s body collapses to the floor and crumbles to dust!"))
 		if (L && !L.out_of_lives)
 			if(L.consume_phylactery())
 				visible_message(span_warning("[src]'s body begins to shake violently, as eldritch forces begin to whisk them away!"))

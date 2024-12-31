@@ -33,7 +33,6 @@
 	backpack_contents = list(
 						/obj/item/lockpickring/mundane)
 	r_hand = /obj/item/reagent_containers/glass/cup/golden/poison //tempting goblet
-	ADD_TRAIT(H, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
 	H.STASTR = 11
 	H.STASPD = 14 
 	H.STACON = 5 //fragile

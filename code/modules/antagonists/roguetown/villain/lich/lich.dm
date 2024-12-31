@@ -92,7 +92,7 @@
 	backl = /obj/item/storage/backpack/rogue/satchel
 	beltr = /obj/item/reagent_containers/glass/bottle/rogue/manapot
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel
-	r_hand = /obj/item/rogueweapon/woodstaff/blackstaff
+	r_hand = /obj/item/gun/magic/staff/blackstaff
 
 	H.mind.adjust_skillrank(/datum/skill/misc/reading, 6, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/alchemy, 5, TRUE)
@@ -177,19 +177,87 @@
 		if(player.mind)
 			to_chat(player, span_boldannounce("Lich [lich_player.real_name] commands: [message]"))
 
-/obj/item/rogueweapon/woodstaff/blackstaff
+/obj/item/gun/magic/staff/blackstaff
 	name = "blackstaff"
-	desc =  "<span class='necrosis'>An unadorned, night-black staff carved of bone.\
-	It glistens with deathly energies.\</span>"
+	desc =  "<span class='necrosis'>An unadorned, night-black staff carved of bone. It glistens with deathly energies."
 	max_integrity = 9999
 	sellprice = 666
 	static_price = TRUE
 	force = 20
 	force_wielded = 25
-	possible_item_intents = list(SPEAR_BASH)
-	gripped_intents = list(SPEAR_BASH,/datum/intent/mace/smash)
+	icon_state = "woodstaff"
+	icon = 'icons/roguetown/weapons/64.dmi'
+	wlength = WLENGTH_LONG
+	w_class = WEIGHT_CLASS_BULKY
+	slot_flags = ITEM_SLOT_BACK
+	blade_dulling = DULLING_BASHCHOP
+	sharpness = IS_BLUNT
+	can_parry = TRUE
+	walking_stick = TRUE
+	pixel_y = -16
+	pixel_x = -16
+	inhand_x_dimension = 64
+	inhand_y_dimension = 64
+	wdefense = 10
+	color = "#1C1C1C"
+	bigboy = TRUE
+	gripsprite = TRUE
+	associated_skill = /datum/skill/combat/polearms
+	ammo_type = /obj/item/ammo_casing/magic/necrotic
+	possible_item_intents = list(SPEAR_BASH, /datum/intent/shoot/staff)
+	gripped_intents = list(SPEAR_BASH,/datum/intent/mace/smash, /datum/intent/shoot/staff, /datum/intent/arc/staff)
 
-/obj/item/rogueweapon/woodstaff/lich/pickup(mob/living/target, mob/living/carbon/human/user)
+/datum/intent/shoot/staff 
+	name = "shoot"
+	icon_state = "inshoot"
+	tranged = 1
+	warnie = "aimwarn"
+	item_d_type = "stab"
+	chargetime = 0
+	no_early_release = FALSE
+	noaa = TRUE
+	charging_slowdown = 0
+	warnoffset = 0
+
+/datum/intent/arc/staff
+	name = "shoot"
+	icon_state = "inshoot"
+	tranged = 1
+	warnie = "aimwarn"
+	item_d_type = "stab"
+	chargetime = 0
+	no_early_release = FALSE
+	noaa = TRUE
+	charging_slowdown = 0
+	warnoffset = 0
+
+/obj/item/ammo_casing/magic/necrotic
+	projectile_type = /obj/projectile/magic/necrotic
+
+/obj/projectile/magic/necrotic
+	name = "necrotic pulse"
+	icon_state = "declone"
+	damage = 20
+	damage_type = BRUTE
+	nodamage = FALSE
+	armor_penetration = 100
+	flag = "magic"
+
+/obj/projectile/magic/necrotic/on_hit(target)
+	if(ismob(target))
+		var/mob/M = target
+		if(M.anti_magic_check())
+			M.visible_message(span_warning("[src] vanishes on contact with [target]!"))
+			qdel(src)
+			return BULLET_ACT_BLOCK
+		if(HAS_TRAIT(M, TRAIT_CABAL)) //same thing but no indication to avoid metagaming
+			qdel(src)
+			return BULLET_ACT_BLOCK
+	. = ..()
+
+
+
+/obj/item/gun/magic/staff/blackstaff/pickup(mob/living/target, mob/living/carbon/human/user)
 	. = ..()
 	if(!HAS_TRAIT(user, TRAIT_CABAL))
 		user.Paralyze(100)
