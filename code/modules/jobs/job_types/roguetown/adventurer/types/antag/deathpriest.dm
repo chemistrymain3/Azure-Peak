@@ -25,7 +25,7 @@
 	H.mind.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.mind.adjust_skillrank(/datum/skill/misc/alchemy, 3, TRUE)
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/bonechill/weak)
+	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/lesser_bonechill)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/raise_lesser_undead)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/sickness)
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/scaboroustouch)
@@ -63,7 +63,7 @@
 
 /obj/item/melee/touch_attack/scaboroustouch/afterattack(mob/living/target, mob/living/carbon/user, proximity)
 	if(isliving(target))
-		if(HAS_TRAIT(src, TRAIT_ZOMBIE_IMMUNE) || (target.mob_biotypes & MOB_UNDEAD))
+		if(HAS_TRAIT(target, TRAIT_ZOMBIE_IMMUNE) || (target.mob_biotypes & MOB_UNDEAD))
 			user.visible_message(span_danger("[user] draws a glyph in the air and touches [target], but nothing happens."))
 			return
 		if(!target.has_status_effect(/datum/status_effect/debuff/afflicted))
@@ -76,9 +76,6 @@
 			target.emote("painscream") // hurts
 			target.Immobilize(0.5)
 			attached_spell.remove_hand()
-		else
-			
-	return
 
 /obj/effect/proc_holder/spell/invoked/chanted/hollowvessel
 	name = "Hollow Vessel"
@@ -93,7 +90,7 @@
 /obj/effect/proc_holder/spell/invoked/chanted/hollowvessel/chant_effects(chant_amount, mob/living/carbon/human/user)
 	. = ..()
 	var/list/living_to_weaken = list()
-	for (var/mob/living/carbon/human/L in view(src, 7))
+	for (var/mob/living/carbon/human/L in view(user, 7))
 		if(istype(L.wear_neck, /obj/item/clothing/neck/roguetown/psicross/necra))
 			if(chant_amount == 1)
 				to_chat(user, span_danger("The amulet glows, and the spell fails to take shape on [L]!"))
