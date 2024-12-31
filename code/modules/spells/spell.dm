@@ -272,7 +272,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
-		if((invocation_type == "whisper" || invocation_type == "shout") && !H.can_speak_vocal())
+		var/obj/item/bodypart/head = H.get_bodypart(BODY_ZONE_HEAD)
+		if((invocation_type == "whisper" || invocation_type == "shout") && !H.can_speak_vocal() && (head && !head.skeletonized)) 
 			to_chat(user, span_warning("I can't get the words out!"))
 			return FALSE
 
