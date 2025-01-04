@@ -185,8 +185,8 @@
 	static_price = TRUE
 	force = 20
 	force_wielded = 25
-	icon_state = "woodstaff"
 	icon = 'icons/roguetown/weapons/64.dmi'
+	icon_state = "woodstaff"
 	wlength = WLENGTH_LONG
 	w_class = WEIGHT_CLASS_BULKY
 	slot_flags = ITEM_SLOT_BACK
@@ -199,37 +199,25 @@
 	inhand_x_dimension = 64
 	inhand_y_dimension = 64
 	wdefense = 10
-	color = "#1C1C1C"
+	color = "#082012"
 	bigboy = TRUE
 	gripsprite = TRUE
+	fire_sound = 'sound/magic/fireball.ogg'
 	associated_skill = /datum/skill/combat/polearms
 	ammo_type = /obj/item/ammo_casing/magic/necrotic
-	possible_item_intents = list(SPEAR_BASH, /datum/intent/shoot/staff)
-	gripped_intents = list(SPEAR_BASH,/datum/intent/mace/smash, /datum/intent/shoot/staff, /datum/intent/arc/staff)
+	possible_item_intents = list(SPEAR_BASH, /datum/intent/shoot)
+	gripped_intents = list(SPEAR_BASH,/datum/intent/mace/smash, /datum/intent/shoot, /datum/intent/arc)
 
-/datum/intent/shoot/staff 
-	name = "shoot"
-	icon_state = "inshoot"
-	tranged = 1
-	warnie = "aimwarn"
-	item_d_type = "stab"
-	chargetime = 0
-	no_early_release = FALSE
-	noaa = TRUE
-	charging_slowdown = 0
-	warnoffset = 0
-
-/datum/intent/arc/staff
-	name = "shoot"
-	icon_state = "inshoot"
-	tranged = 1
-	warnie = "aimwarn"
-	item_d_type = "stab"
-	chargetime = 0
-	no_early_release = FALSE
-	noaa = TRUE
-	charging_slowdown = 0
-	warnoffset = 0
+/obj/item/magic/staff/blackstaff/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen")
+				return list("shrink" = 0.6,"sx" = -6,"sy" = -1,"nx" = 8,"ny" = 0,"wx" = -4,"wy" = 0,"ex" = 2,"ey" = 1,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = -38,"sturn" = 37,"wturn" = 32,"eturn" = -23,"nflip" = 0,"sflip" = 8,"wflip" = 8,"eflip" = 0)
+			if("wielded")
+				return list("shrink" = 0.6,"sx" = 4,"sy" = -2,"nx" = -3,"ny" = -2,"wx" = -5,"wy" = -1,"ex" = 3,"ey" = -2,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 7,"sturn" = -7,"wturn" = 16,"eturn" = -22,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
+			if("onbelt")
+				return list("shrink" = 0.3,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 
 /obj/item/ammo_casing/magic/necrotic
 	projectile_type = /obj/projectile/magic/necrotic
@@ -242,6 +230,8 @@
 	nodamage = FALSE
 	armor_penetration = 100
 	flag = "magic"
+	woundclass = BCLASS_SMASH
+	hitsound = 'sound/combat/hits/blunt/shovel_hit2.ogg'
 
 /obj/projectile/magic/necrotic/on_hit(target)
 	if(ismob(target))
@@ -257,10 +247,10 @@
 
 
 
-/obj/item/gun/magic/staff/blackstaff/pickup(mob/living/target, mob/living/carbon/human/user)
+/obj/item/gun/magic/staff/blackstaff/pickup(mob/living/carbon/human/user)
 	. = ..()
 	if(!HAS_TRAIT(user, TRAIT_CABAL))
 		user.Paralyze(100)
 		user.dropItemToGround(src, TRUE)
-		user.visible_message(span_warning("A powerful force shoves [user] away from [target]!"), \
+		user.visible_message(span_warning("A powerful force shoves [user] away!"), \
 							 span_necrosis("\"THAT DOES NOT BELONG TO YOU.\""))

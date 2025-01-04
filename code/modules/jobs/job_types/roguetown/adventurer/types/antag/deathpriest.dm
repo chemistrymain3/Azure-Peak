@@ -36,14 +36,14 @@
 	name = "Scaborous Touch"
 	desc = "Fester open wounds on a target. Doing it again will turn the wound to Rot."
 	clothes_req = FALSE
-	drawmessage = "I utter the lesser secrets of Zaribel, and sickness brims on my hand..."
+	drawmessage = "I utter the lesser secrets of Zaelorian, and sickness brims on my hand..."
 	dropmessage = "I release my focus, and death recedes."
 	school = "transmutation"
 	overlay_state = "bloodsteal"
 	sound = list('sound/misc/portal_enter.ogg')
 	chargedrain = 0
 	chargetime = 0
-	charge_max = 10 SECONDS //cooldown
+	charge_max = 20 SECONDS //cooldown
 	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/arcane
 	hand_path = /obj/item/melee/touch_attack/scaboroustouch
@@ -76,6 +76,22 @@
 			target.emote("painscream") // hurts
 			target.Immobilize(0.5)
 			attached_spell.remove_hand()
+		else
+			if(ishuman(target))
+				var/mob/living/carbon/human/H = target
+				var/obj/item/bodypart/T = pick(H.bodyparts)
+				H.reagents.remove_reagent(/datum/reagent/infection/major/putrescent, 20)
+				T.rotted = TRUE
+				T.update_disabled()
+				T.update_limb()
+				H.update_body()
+				user.visible_message(span_danger("[user] touches [H] and their [T] collapses into necrotic sludge!!"))
+				H.emote("painscream")
+				M.adjustToxLoss(30)
+				H.knockOver(3)
+			attached_spell.remove_hand()
+	user.mob_light(_range = 3, _color = LIGHT_COLOR_DARKGREEN, _duration = 0.2 SECONDS)
+
 
 /obj/effect/proc_holder/spell/invoked/chanted/hollowvessel
 	name = "Hollow Vessel"

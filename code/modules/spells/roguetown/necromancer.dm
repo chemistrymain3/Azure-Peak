@@ -32,7 +32,7 @@
 		return TRUE
 	return FALSE
 
-/obj/effect/proc_holder/spell/invoked/lesser_bonechill/weak
+/obj/effect/proc_holder/spell/invoked/lesser_bonechill
 	name = "Lesser Bonechill"
 	charge_max = 15 SECONDS
 
